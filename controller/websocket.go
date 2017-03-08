@@ -1,18 +1,27 @@
 package controller
 
 import (
-	"net/http"
+	"golang.org/x/net/websocket"
 
-	"github.com/gin-gonic/gin"
-	"github.com/inconshreveable/log15"
+	log "github.com/inconshreveable/log15"
 )
 
-//WebsocketCtrl websocket controller
-func WebsocketCtrl(c *gin.Context) {
+//WebsocketCtrl websocket  message
+func WebsocketCtrl(ws *websocket.Conn) {
+	for {
+		log.Info("=== Start ===")
+		msg := make([]byte, 512)
+		n, err := ws.Read(msg)
+		if err != nil {
+			log.Error("Receive", "error", err)
+		}
+		log.Info("Receive ", "Message", string(msg[:n]))
 
-	log := c.MustGet("log").(log15.Logger)
-
-	log.Info("=== Start ===")
-
-	c.JSON(http.StatusOK, struct{}{})
+		sendMsg := "[Roger that]"
+		m, err := ws.Write([]byte(sendMsg))
+		if err != nil {
+			log.Error("Send", "error", err)
+		}
+		log.Info("Send ", "Message", string(sendMsg[:m]))
+	}
 }

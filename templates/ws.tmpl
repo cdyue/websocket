@@ -1,0 +1,44 @@
+<html>
+<script type="text/javascript">
+    var sock = null;
+    var wsuri = "ws://127.0.0.1:4000/websocket";
+
+    window.onload = function () {
+
+        console.log("onload");
+        sock = new WebSocket(wsuri);
+
+        sock.onopen = function () {
+            console.log("connected to " + wsuri);
+        }
+
+        sock.onclose = function (e) {
+            console.log("connection closed (" + e.code + ")");
+        }
+
+        sock.onmessage = function (e) {
+            console.log("message received: " + e.data);
+            receive(e.data)
+        }
+    };
+
+    function send() {
+        var msg = document.getElementById('message1').value;
+        sock.send(msg);
+    };
+
+    function receive(message) {
+        document.getElementById("message2").value = message;
+    }
+</script>
+<h1>WebSocket Test</h1>
+<form>
+    <p>
+        Send Message: <input id="message1" type="text" value="">
+        Receive Message: <input id="message2" type="text" value="">
+    </p>
+</form>
+<button onclick="send();">Send Message</button>
+
+
+</html>
