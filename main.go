@@ -20,12 +20,15 @@ func main() {
 	r.Use(handler.Log()) //log15日志
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	r.GET("/index", func(c *gin.Context) {
-		c.HTML(200, "ws.tmpl", nil)
-	})
+	r.POST("/user", gin.Bind(ctrl.User{}), ctrl.CreateUser)
+
 	r.GET("/websocket", func(c *gin.Context) {
 		handler := websocket.Handler(ctrl.WebsocketCtrl)
 		handler.ServeHTTP(c.Writer, c.Request)
+	})
+
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(200, "ws.tmpl", nil)
 	})
 	r.Run(":4000")
 }
